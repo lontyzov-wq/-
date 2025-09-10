@@ -1,0 +1,343 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Кто лох?</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Comic Sans MS', cursive, sans-serif;
+        }
+        
+        body {
+            background: linear-gradient(45deg, #ff6b6b, #4ecdc4, #45b7d1, #96ceb4);
+            min-height: 100vh;
+            background-size: 400% 400%;
+            animation: gradientBG 15s ease infinite;
+            padding: 20px;
+            position: relative;
+            overflow-x: hidden;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            position: relative;
+            z-index: 2;
+        }
+        
+        header {
+            text-align: center;
+            margin-bottom: 40px;
+            padding: 20px;
+            background: rgba(255, 255, 255, 0.9);
+            border-radius: 20px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+        }
+        
+        h1 {
+            font-size: 3.5rem;
+            color: #e74c3c;
+            text-shadow: 3px 3px 0 #f39c12;
+            margin-bottom: 10px;
+        }
+        
+        .subtitle {
+            font-size: 1.5rem;
+            color: #2c3e50;
+            margin-bottom: 20px;
+        }
+        
+        .buttons-container {
+            display: flex;
+            justify-content: center;
+            gap: 30px;
+            flex-wrap: wrap;
+            margin-bottom: 40px;
+        }
+        
+        .btn {
+            padding: 25px 40px;
+            font-size: 2rem;
+            font-weight: bold;
+            border: none;
+            border-radius: 15px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
+            min-width: 250px;
+        }
+        
+        .btn-artem {
+            background: linear-gradient(45deg, #e74c3c, #c0392b);
+            color: white;
+        }
+        
+        .btn-sanya {
+            background: linear-gradient(45deg, #3498db, #2980b9);
+            color: white;
+        }
+        
+        .btn:hover {
+            transform: translateY(-10px) scale(1.05);
+            box-shadow: 0 15px 30px rgba(0, 0, 0, 0.3);
+        }
+        
+        .btn:active {
+            transform: translateY(0) scale(0.95);
+        }
+        
+        .score-board {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background: rgba(255, 255, 255, 0.95);
+            padding: 20px;
+            border-radius: 15px;
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.2);
+            min-width: 200px;
+            text-align: center;
+            z-index: 100;
+        }
+        
+        .score-title {
+            font-size: 1.5rem;
+            color: #2c3e50;
+            margin-bottom: 15px;
+            border-bottom: 3px solid #f39c12;
+            padding-bottom: 5px;
+        }
+        
+        .score-item {
+            display: flex;
+            justify-content: space-between;
+            margin: 10px 0;
+            font-size: 1.3rem;
+        }
+        
+        .score-artem {
+            color: #e74c3c;
+            font-weight: bold;
+        }
+        
+        .score-sanya {
+            color: #3498db;
+            font-weight: bold;
+        }
+        
+        .meme-container {
+            position: fixed;
+            inset: 0;
+            pointer-events: none;
+            z-index: 1;
+        }
+        
+        .meme {
+            position: absolute;
+            font-size: 2rem;
+            opacity: 0.2;
+            animation: float 10s infinite linear;
+            pointer-events: none;
+            user-select: none;
+        }
+        
+        @keyframes gradientBG {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+        
+        @keyframes float {
+            0% { transform: translateY(100vh) rotate(0deg); }
+            100% { transform: translateY(-100px) rotate(360deg); }
+        }
+        
+        .confetti {
+            position: fixed;
+            width: 10px;
+            height: 10px;
+            background: #f39c12;
+            opacity: 0;
+            pointer-events: none;
+        }
+        
+        @media (max-width: 768px) {
+            h1 { font-size: 2.5rem; }
+            .btn { font-size: 1.5rem; padding: 20px 30px; min-width: 200px; }
+            .score-board { position: relative; top: 0; right: 0; margin: 20px auto; width: 100%; }
+        }
+        
+        .reset-btn {
+            display: block;
+            margin: 20px auto;
+            padding: 10px 20px;
+            background: #2c3e50;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 1rem;
+        }
+    </style>
+</head>
+<body>
+    <div class="meme-container" id="memeContainer"></div>
+    
+    <div class="container">
+        <header>
+            <h1>КТО ЛОХ?</h1>
+            <p class="subtitle">Выбери свою сторону и голосуй!</p>
+        </header>
+        
+        <div class="buttons-container">
+            <button class="btn btn-artem" id="artemBtn">Артем лох</button>
+            <button class="btn btn-sanya" id="sanyaBtn">Саня лох</button>
+        </div>
+    </div>
+    
+    <div class="score-board">
+        <div class="score-title">СЧЕТ</div>
+        <div class="score-item">
+            <span>Артем:</span>
+            <span class="score-artem" id="artemScore">0</span>
+        </div>
+        <div class="score-item">
+            <span>Саня:</span>
+            <span class="score-sanya" id="sanyaScore">0</span>
+        </div>
+        <button class="reset-btn" id="resetBtn">Сбросить</button>
+    </div>
+
+    <script>
+        // Инициализация счетчиков
+        let artemCount = 0;
+        let sanyaCount = 0;
+        
+        // Элементы DOM
+        const artemBtn = document.getElementById('artemBtn');
+        const sanyaBtn = document.getElementById('sanyaBtn');
+        const artemScore = document.getElementById('artemScore');
+        const sanyaScore = document.getElementById('sanyaScore');
+        const resetBtn = document.getElementById('resetBtn');
+        const memeContainer = document.getElementById('memeContainer');
+        
+        // Brainrot мемы для фона
+        const memes = [
+            "💀", "☠️", "🔥", "😂", "🤡", "🍷", "🗿", "😭", "👑", "🚬",
+            "😈", "⚡", "🎵", "😏", "🫡", "🧊", "🫥", "😴", "🥶", "🫠"
+        ];
+        
+        // Создаем плавающие мемы
+        function createFloatingMemes() {
+            for (let i = 0; i < 20; i++) {
+                const meme = document.createElement('div');
+                meme.className = 'meme';
+                meme.textContent = memes[Math.floor(Math.random() * memes.length)];
+                meme.style.left = Math.random() * 100 + 'vw';
+                meme.style.animationDelay = Math.random() * 10 + 's';
+                meme.style.fontSize = (Math.random() * 30 + 20) + 'px';
+                memeContainer.appendChild(meme);
+            }
+        }
+        
+        // Создаем конфетти
+        function createConfetti(x, y, color) {
+            for (let i = 0; i < 30; i++) {
+                const confetti = document.createElement('div');
+                confetti.className = 'confetti';
+                confetti.style.left = x + 'px';
+                confetti.style.top = y + 'px';
+                confetti.style.background = color;
+                document.body.appendChild(confetti);
+                
+                // Анимация конфетти
+                const angle = Math.random() * Math.PI * 2;
+                const speed = Math.random() * 10 + 5;
+                const size = Math.random() * 8 + 4;
+                
+                confetti.style.width = size + 'px';
+                confetti.style.height = size + 'px';
+                
+                let xPos = x;
+                let yPos = y;
+                let opacity = 1;
+                
+                const animateConfetti = () => {
+                    xPos += Math.cos(angle) * speed;
+                    yPos += Math.sin(angle) * speed + 0.5; // гравитация
+                    opacity -= 0.02;
+                    
+                    confetti.style.left = xPos + 'px';
+                    confetti.style.top = yPos + 'px';
+                    confetti.style.opacity = opacity;
+                    
+                    if (opacity > 0) {
+                        requestAnimationFrame(animateConfetti);
+                    } else {
+                        confetti.remove();
+                    }
+                };
+                
+                requestAnimationFrame(animateConfetti);
+            }
+        }
+        
+        // Обновление счетчика
+        function updateScore() {
+            artemScore.textContent = artemCount;
+            sanyaScore.textContent = sanyaCount;
+            
+            // Сохраняем в localStorage
+            localStorage.setItem('artemScore', artemCount);
+            localStorage.setItem('sanyaScore', sanyaCount);
+        }
+        
+        // Загрузка сохраненных результатов
+        function loadScores() {
+            const savedArtem = localStorage.getItem('artemScore');
+            const savedSanya = localStorage.getItem('sanyaScore');
+            
+            if (savedArtem) artemCount = parseInt(savedArtem);
+            if (savedSanya) sanyaCount = parseInt(savedSanya);
+            
+            updateScore();
+        }
+        
+        // Обработчики событий
+        artemBtn.addEventListener('click', function() {
+            artemCount++;
+            updateScore();
+            createConfetti(
+                artemBtn.offsetLeft + artemBtn.offsetWidth / 2,
+                artemBtn.offsetTop + artemBtn.offsetHeight / 2,
+                '#e74c3c'
+            );
+        });
+        
+        sanyaBtn.addEventListener('click', function() {
+            sanyaCount++;
+            updateScore();
+            createConfetti(
+                sanyaBtn.offsetLeft + sanyaBtn.offsetWidth / 2,
+                sanyaBtn.offsetTop + sanyaBtn.offsetHeight / 2,
+                '#3498db'
+            );
+        });
+        
+        resetBtn.addEventListener('click', function() {
+            artemCount = 0;
+            sanyaCount = 0;
+            updateScore();
+        });
+        
+        // Инициализация
+        window.addEventListener('load', function() {
+            loadScores();
+            createFloatingMemes();
+        });
+    </script>
+</body>
+</html>
